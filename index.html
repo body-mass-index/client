@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" type="image/png" href="https://www.chasebrexton.org/sites/default/files/icons-bmi.png">
+
+  <title>BMI Generator</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <!-- Custom styles for this template -->
+  <!-- <link href="./css/simple-sidebar.css" rel="stylesheet"> -->
+  <link href="css/main.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div id="app">
+    <transition name="fade">
+      <div v-if="showMessage" class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        {{ message }}
+        <button @click="showMessage=!showMessage" type="button" class="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </transition>
+    <div id="login-register-form" v-show="showLogRegPage" class="container mt-4">
+      <ul class="nav nav-pills mb-3" id="login-register-tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="login-tab" data-toggle="pill" href="#pills-login" role="tab"
+            aria-controls="pills-login" aria-selected="true">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="register-tab" data-toggle="pill" href="#pills-register" role="tab"
+            aria-controls="pills-register" aria-selected="false">Register</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+        <form @submit.prevent="login" class="tab-pane fade show active" id="pills-login" role="tabpanel"
+          aria-labelledby="pills-login-tab" method="POST">
+          <div class="form-group">
+            <label for="Email">Email address</label>
+            <input v-model="inputLogin.email" type="email" class="form-control" id="emaillogin"
+              aria-describedby="emailHelp" placeholder="Enter email" required>
+          </div>
+          <div class="form-group">
+            <label for="Password">Password</label>
+            <input v-model="inputLogin.password" type="password" class="form-control" id="passwordlogin"
+              placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <br>
+          <div class="mt-4">
+            <h3>OR</h3>
+            <h5>Sign in with Google :</h5>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <br>
+          </div>
+        </form>
+        <form @submit.prevent="register" class="tab-pane fade" id="pills-register" role="tabpanel"
+          aria-labelledby="pills-register-tab" method="POST">
+          <div class="form-group">
+            <label for="Username">Name</label>
+            <input v-model="inputRegister.name" type="text" class="form-control" id="nameregister"
+              placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="Email">Email Address</label>
+            <input v-model="inputRegister.email" type="email" class="form-control" id="emailregister"
+              aria-describedby="emailHelp" placeholder="Enter email">
+          </div>
+          <div class="form-group">
+            <label for="Password">Password</label>
+            <input v-model="inputRegister.password" type="password" class="form-control" id="passwordregister"
+              placeholder="Password">
+          </div>
+          <div class="form-group">
+          <div class="custom-file">
+              <input type="file" class="custom-file-input" id="customFile">
+              <label class="custom-file-label" for="customFile">Choose file for your profile picture</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+      </div>
+    </div>
+
+    <nav id="NavBar" v-show="!showLogRegPage" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <h1>BODY MASS INDEX GENERATOR</h1>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <img
+            src="https://media.matamata.com/thumbs/2019/02/22/72534-jirayut-instagramatjirayutdaa4official/745x489-img-72534-jirayut-instagramatjirayutdaa4official.jpg"
+            class="rounded-circle" alt="Profile Image" width="50" height="50">
+          <li class="nav-item">
+            <a class="nav-link" href="#">{{ name }}</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link btn btn-secondary dropdown-toggle" href="#" id="navbarDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ name }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Profile</a>
+              <a class="dropdown-item" href="#">Edit Account</a>
+              <div class="dropdown-divider"></div>
+              <a @click="logout" class="dropdown-item" href="#">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Main Page -->
+    <div v-show="showMainPage" class="container-fluid" id="MainPage">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-4 border">
+            <form>
+              <div class="form-group">
+                <label for="inputHeight">Height</label>
+                <input v-model="inputNewBMI.height" type="text" class="form-control" id="inputHeight"
+                  aria-describedby="heightHelp" placeholder="eg. 170">
+                <small id="heightHelp" class="form-text text-muted">Value in cm</small>
+              </div>
+              <div class="form-group">
+                <label for="inputWeight">Password</label>
+                <input v-model="inputNewBMI.weight" type="text" class="form-control" id="inputWeight"
+                  aria-describedby="heightHelp" placeholder="eg. 55">
+                <small id="weightHelp" class="form-text text-muted">Value in kg</small>
+              </div>
+              <button @click="generateBMI" type="submit" class="btn btn-primary">Generate BMI</button>
+            </form>
+          </div>
+          <div class="col-8 border">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Main Page -->
+
+    <!-- Profile Page -->
+    <div v-show="showProfilePage" class="container-fluid" id="ProfilePage">
+      <div class="row">
+        <div class="col-4">
+          <div class="list-group" id="list-tab" role="tablist">
+            <a data-toggle="modal" data-target=".bd-example-modal-lg" class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list"
+              href="#list-home" role="tab" aria-controls="home">Home</a>
+            <a data-toggle="modal" data-target=".bd-example-modal-lg" class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+              href="#list-profile" role="tab" aria-controls="profile">Profile</a>
+            <a data-toggle="modal" data-target=".bd-example-modal-lg" class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list"
+              href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+            <a data-toggle="modal" data-target=".bd-example-modal-lg" class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list"
+              href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+          </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                MODAL DONG
+              </div>
+            </div>
+          </div>
+        <div class="col-8">
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...
+            </div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Profile Page -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script src="./js/vue.js"></script>
+    <script src="./js/main.js"></script>
+    <!-- <script src="js/main.js"></script> -->
+    <!-- Menu Toggle Script -->
+    <script>
+    // ClassicEditor
+    //   .create(document.querySelector('#editor'))
+    //   .catch(error => {
+    //     console.error(error);
+    //   });
+
+    //   $("#menu-toggle").click(function (e) {
+    //   e.preventDefault();
+    //   $("#wrapper").toggleClass("toggled");
+    // });
+    </script>
+
+</body>
+
+</html>
