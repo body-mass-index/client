@@ -8,7 +8,6 @@ var app = new Vue({
     showProfilePage: true,
     showLogRegPage: false,
     name: "",
-    // registered: false,
     inputLogin: {
       email: "",
       password: ""
@@ -16,6 +15,7 @@ var app = new Vue({
     inputRegister: {
       name: "",
       email: "",
+      image: "",
       password: ""
     },
     inputNewBMI: {
@@ -39,6 +39,7 @@ var app = new Vue({
   },
   methods: {
     emptyLogRegField() {
+      // this.name = name || ""
       this.inputRegister.name = ""
       this.inputRegister.image = ""
       this.inputRegister.email = ""
@@ -50,6 +51,24 @@ var app = new Vue({
       axios({
         method: "GET",
         url: "/bmi",
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+        .then(response => {
+          this.results = [...response.data]
+          // this.results.forEach((obj, i) => {
+          //   this.results[i].created_at = new Date(this.results[i].created_at.slice(0, 10)).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
+          // })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    getModalBMI(idBMI) {
+      axios({
+        method: "GET",
+        url: `/bmi/${idBMI}`,
         headers: {
           token: localStorage.getItem('token')
         }
