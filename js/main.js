@@ -15,8 +15,7 @@ var app = new Vue({
     inputRegister: {
       name: "",
       email: "",
-      image: "",
-      password: ""
+      password: "",
     },
     inputNewBMI: {
       height: "",
@@ -25,7 +24,9 @@ var app = new Vue({
     modal:{
       url_image: "",
       status: ""
-    }
+    },
+    image: "",
+
   },
   created() {
     // if (localStorage.hasOwnProperty('token')) {
@@ -42,6 +43,13 @@ var app = new Vue({
     // }
   },
   methods: {
+    selectFile(event) {
+      this.image = event.target.files[0]
+    },  
+    messageSuccess(message) {
+      this.message = message
+      this.showMessage = true
+    },
     emptyLogRegField() {
       // this.name = name || ""
       this.inputRegister.name = ""
@@ -96,25 +104,25 @@ var app = new Vue({
     },
     register() {
       var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
+
+      var formData = new FormData();
+
+      formData.append("name", this.inputRegister.name)
+      formData.append("email", this.inputRegister.email)
+      formData.append("password", this.inputRegister.password)
+      formData.append("image", this.image, this.image.name)
+
+
       if (emailRegex.test(this.inputRegister.email)) {
-        axios({
-          method: "POST",
-          url: "/user/signup",
-          data: {
-            name: this.inputRegister.name,
-            image: this.inputRegister.image,
-            email: this.inputRegister.email,
-            password: this.inputRegister.password
-          }
-        })
+        //   headers: {'Content-Type': 'multipart/form-data' }
+        axios.post('/user/signup', formData)
           .then(({ data }) => {
-            console.log(data.token)
             Swal.fire(
               'Registered!',
               'You Have Been Registered Successfully, please login now',
               'success'
             )
-            emptyLogRegField()
+            this.emptyLogRegField()
           })
           .catch(err => {
             console.log(err)
@@ -130,17 +138,16 @@ var app = new Vue({
     },
     login() {
       var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-      if (emailRegex.test(this.inputRegister.email)) {
+      if (emailRegex.test(this.inputLogin.email)) {
         axios({
           method: "POST",
-          url: "/users/login",
+          url: "/user/signin",
           data: {
             email: this.inputLogin.email,
             password: this.inputLogin.password
           }
         })
           .then(({ data }) => {
-            console.log(data.token)
             localStorage.setItem('token', data.token)
             Swal.fire(
               'Logged In!',
@@ -151,7 +158,7 @@ var app = new Vue({
             this.name = localStorage.getItem('name')
             this.showLogRegPage = false
             this.showMainPage = true
-            emptyLogRegField()
+            this.emptyLogRegField()
           })
           .catch(err => {
             console.log(err)
