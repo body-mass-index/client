@@ -4,11 +4,9 @@ var app = new Vue({
   el: '#app',
   data: {
     results: [],
-    showMainPage: true,
-    showProfilePage: false,
+    showMainPage: false,
+    showProfilePage: true,
     showLogRegPage: false,
-    showMessage: true,
-    message: "Wow",
     name: "",
     // registered: false,
     inputLogin: {
@@ -26,24 +24,20 @@ var app = new Vue({
     }
   },
   created() {
-    if (localStorage.hasOwnProperty('token')) {
-      this.showLogRegPage = false
-      this.showMainPage = true
-      this.showProfilePage = false
-      this.name = localStorage.getItem('name')
-      this.getAllBMIs()
-    }
-    else {
-      this.showLogRegPage = true
-      this.showMainPage = false
-      this.showProfilePage = false
-    }
+    // if (localStorage.hasOwnProperty('token')) {
+    //   this.showLogRegPage = false
+    //   this.showMainPage = true
+    //   this.showProfilePage = false
+    //   this.name = localStorage.getItem('name')
+    //   this.getAllBMIs()
+    // }
+    // else {
+    //   this.showLogRegPage = true
+    //   this.showMainPage = false
+    //   this.showProfilePage = false
+    // }
   },
   methods: {
-    messageSuccess(message){
-      this.message = message
-      this.showMessage = true
-    },
     emptyLogRegField() {
       this.inputRegister.name = ""
       this.inputRegister.image = ""
@@ -55,16 +49,16 @@ var app = new Vue({
     getAllBMIs() {
       axios({
         method: "GET",
-        url: "/posts/read",
+        url: "/bmi",
         headers: {
           token: localStorage.getItem('token')
         }
       })
         .then(response => {
-          this.posts = [...response.data]
-          this.posts.forEach((obj, i) => {
-            this.posts[i].created_at = new Date(this.posts[i].created_at.slice(0, 10)).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
-          })
+          this.results = [...response.data]
+          // this.results.forEach((obj, i) => {
+          //   this.results[i].created_at = new Date(this.results[i].created_at.slice(0, 10)).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
+          // })
         })
         .catch(err => {
           console.log(err)
@@ -84,111 +78,11 @@ var app = new Vue({
       })
         .then(result => {
           this.showMainPage = true
-          this.messageSuccess("New Post have been created")
           console.log(result)
         })
         .catch(err => {
           console.log(err)
         })
-    },
-    createBMI() {
-      axios({
-        method: "POST",
-        url: "/posts/create",
-        data: {
-          title: this.inputNewPost.title,
-          content: this.inputNewPost.content
-        },
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
-        .then(result => {
-          this.showMainPage = true
-          this.showNewPostPage = false
-          this.messageSuccess("New Post have been created")
-          console.log(result)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    updatePost() {
-      axios({
-        method: "PUT",
-        url: `/posts/update`,
-        data: {
-          title: this.inputNewPost.title,
-          content: this.inputNewPost.content
-        },
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
-        .then(result => {
-          this.showMainPage = true
-          this.showNewPostPage = false
-          this.message = "New Post have been created"
-          this.showMessage = true
-          console.log(result)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    editPost(idPost) {
-      axios({
-        method: "GET",
-        url: `/posts/read/${idPost}`,
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
-        .then(result => {
-          console.log(result)
-          this.formPostHeading = "Edit Post"
-          this.showMainPage = false
-          this.showNewPostPage = true
-          this.inputNewPost.title = result.data.title
-          this.inputNewPost.content = result.data.content
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    deletePost(idPost) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.value) {
-          console.log('processing')
-          axios({
-            method: "DELETE",
-            url: `/posts/delete/${idPost}`,
-            headers: {
-              token: localStorage.getItem('token')
-            }
-          })
-            .then(result => {
-              this.posts = this.posts.filter(post => post._id !== idPost)
-              Swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
-                'success'
-              )
-              console.log(result)
-            })
-            .catch(err => {
-              console.log(err)
-            })
-        }
-      })
     },
     register() {
       var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
@@ -205,8 +99,11 @@ var app = new Vue({
         })
           .then(({ data }) => {
             console.log(data.token)
-            this.message = "You Have Been Registered Successfully, please login now"
-            this.showMessage = true
+            Swal.fire(
+              'Registered!',
+              'You Have Been Registered Successfully, please login now',
+              'success'
+            )
             emptyLogRegField()
           })
           .catch(err => {
@@ -235,8 +132,11 @@ var app = new Vue({
           .then(({ data }) => {
             console.log(data.token)
             localStorage.setItem('token', data.token)
-            this.message = "You Have Been Logged In Successfully"
-            this.showMessage = true
+            Swal.fire(
+              'Logged In!',
+              'You have been logged in successfully!',
+              'success'
+            )
             localStorage.setItem('name', data.name)
             this.name = localStorage.getItem('name')
             this.showLogRegPage = false
@@ -257,8 +157,11 @@ var app = new Vue({
     },
     logout() {
       localStorage.removeItem('token')
-      this.message = "You Have Been Logged Out Successfully"
-      this.showMessage = true
+      Swal.fire(
+        'Logged Out!',
+        'You have been logged out successfully!',
+        'success'
+      )
       this.showLogRegPage = true
       this.showMainPage = false
     }

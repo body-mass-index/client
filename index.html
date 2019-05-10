@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
+  <script src="./js/vue.js"></script>
+  <script src="./js/components/result-bmi.js"></script>
   <link rel="icon" type="image/png" href="https://www.chasebrexton.org/sites/default/files/icons-bmi.png">
 
   <title>BMI Generator</title>
@@ -24,14 +26,6 @@
 
 <body>
   <div id="app">
-    <transition name="fade">
-      <div v-if="showMessage" class="alert alert-warning alert-dismissible fade show text-center" role="alert">
-        {{ message }}
-        <button @click="showMessage=!showMessage" type="button" class="close" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    </transition>
     <div id="login-register-form" v-show="showLogRegPage" class="container mt-4">
       <ul class="nav nav-pills mb-3" id="login-register-tab" role="tablist">
         <li class="nav-item">
@@ -84,7 +78,7 @@
           </div>
           <div class="form-group">
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="customFile">
+              <input v-model="inputRegister.image" type="file" class="custom-file-input" id="customFile">
               <label class="custom-file-label" for="customFile">Choose file for your profile picture</label>
             </div>
           </div>
@@ -157,86 +151,39 @@
       <div class="row">
         <div class="col-4">
           <div class="list-group">
-            <a data-toggle="modal" data-target=".bd-example-modal-lg" href="#" class="list-group-item list-group-item-action">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small>3 days ago</small>
-              </div>
-              <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius
-                blandit.</p>
-              <small>Donec id elit non mi porta.</small>
-            </a>
-            <a data-toggle="modal" data-target=".bd-example-modal-lg" href="#" class="list-group-item list-group-item-action">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small class="text-muted">3 days ago</small>
-              </div>
-              <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius
-                blandit.</p>
-              <small class="text-muted">Donec id elit non mi porta.</small>
-            </a>
-            <a data-toggle="modal" data-target=".bd-example-modal-lg" href="#" class="list-group-item list-group-item-action">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">List group item heading</h5>
-                <small class="text-muted">3 days ago</small>
-              </div>
-              <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius
-                blandit.</p>
-              <small class="text-muted">Donec id elit non mi porta.</small>
-            </a>
+            <result-bmi v-for="result in results" v-bind:key="result._id" v-bind:result="result"></result-bmi>
           </div>
-        </div>
-        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              MODAL DONG
+          <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                MODAL DONG
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-8">
-          <!-- <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...
-            </div>
-            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
-            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
-            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
-          </div> -->
+          <div class="col-8">
+
+          </div>
         </div>
       </div>
     </div>
-    <!-- End of Profile Page -->
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/classic/ckeditor.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
-    <script src="./js/vue.js"></script>
-    <script src="./js/main.js"></script>
-    <!-- <script src="js/main.js"></script> -->
-    <!-- Menu Toggle Script -->
-    <script>
-    // ClassicEditor
-    //   .create(document.querySelector('#editor'))
-    //   .catch(error => {
-    //     console.error(error);
-    //   });
-
-    //   $("#menu-toggle").click(function (e) {
-    //   e.preventDefault();
-    //   $("#wrapper").toggleClass("toggled");
-    // });
-    </script>
-
+  </div>
+  <!-- End of Profile Page -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+  <script src="./js/main.js"></script>
 </body>
 
 </html>
