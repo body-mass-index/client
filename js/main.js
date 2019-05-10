@@ -5,7 +5,7 @@ var app = new Vue({
   data: {
     results: [],
     showMainPage: false,
-    showProfilePage: true,
+    showProfilePage: false,
     showLogRegPage: false,
     name: "",
     inputLogin: {
@@ -17,18 +17,49 @@ var app = new Vue({
       email: "",
       password: "",
     },
-    inputNewBMI: {
+    inputnewbmi: {
       height: "",
       weight: ""
     },
-    modal:{
+    // outputBMI: {
+    //   status: '',
+    //   result: '',
+    //   ideal_weight: ''
+    // },
+    modal: {
       url_image: "",
       status: ""
     },
-    image: "",
+    user: {
+      name: null,
+      image_profil: null
+    },
 
+    result: {
+      status: null,
+      point: null,
+      idealMan: null,
+      idealWoman: null
+    },
+    input: {
+      weight: null,
+      height: null,
+    },
   },
   created() {
+    if (localStorage.hasOwnProperty('token')) {
+      this.showLogRegPage = false
+      this.showMainPage = true
+      this.showProfilePage = false
+      this.name = localStorage.getItem('name')
+      this.getAllBMIs()
+      // this.user.name = localStorage.getItem('name')
+      this.user.image_profil = localStorage.pp
+    } else {
+      this.showLogRegPage = true
+      this.showMainPage = false
+      this.showProfilePage = false
+    }
     // if (localStorage.hasOwnProperty('token')) {
     //   this.showLogRegPage = false
     //   this.showMainPage = true
@@ -61,12 +92,12 @@ var app = new Vue({
     },
     getAllBMIs() {
       axios({
-        method: "GET",
-        url: "/bmi",
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
+          method: "GET",
+          url: "/bmi",
+          headers: {
+            token: localStorage.getItem('token')
+          }
+        })
         .then(response => {
           this.results = [...response.data]
           // this.results.forEach((obj, i) => {
@@ -83,20 +114,23 @@ var app = new Vue({
     },
     generateBMI() {
       axios({
-        method: "POST",
-        url: "/posts/create",
-        data: {
-          title: this.inputNewPost.title,
-          content: this.inputNewPost.content
-          
-        },
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
+          method: "POST",
+          url: "http://localhost:3000/bmi/result",
+          data: {
+            height: this.inputnewbmi.height,
+            weight: this.inputnewbmi.weight
+          },
+          headers: {
+            token: localStorage.getItem('token')
+          }
+        })
         .then(result => {
+          this.height = this.inputnewbmi.height
+          this.weight = this.inputnewbmi.weight
           this.showMainPage = true
-          console.log(result)
+          this.messageSuccess("New Post have been created")
+          console.log(result.data, 'hehehehe')
+          this.result = result.data
         })
         .catch(err => {
           console.log(err)
@@ -114,9 +148,20 @@ var app = new Vue({
 
 
       if (emailRegex.test(this.inputRegister.email)) {
-        //   headers: {'Content-Type': 'multipart/form-data' }
-        axios.post('/user/signup', formData)
-          .then(({ data }) => {
+        axios({
+            method: "POST",
+            url: "/user/signup",
+            data: {
+              name: this.inputRegister.name,
+              image: this.inputRegister.image,
+              email: this.inputRegister.email,
+              password: this.inputRegister.password
+            }
+          })
+          .then(({
+            data
+          }) => {
+            console.log(data.token)
             Swal.fire(
               'Registered!',
               'You Have Been Registered Successfully, please login now',
@@ -127,8 +172,7 @@ var app = new Vue({
           .catch(err => {
             console.log(err)
           })
-      }
-      else {
+      } else {
         Swal.fire({
           type: 'error',
           title: 'Input Error',
@@ -140,21 +184,27 @@ var app = new Vue({
       var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
       if (emailRegex.test(this.inputLogin.email)) {
         axios({
-          method: "POST",
-          url: "/user/signin",
-          data: {
-            email: this.inputLogin.email,
-            password: this.inputLogin.password
-          }
-        })
-          .then(({ data }) => {
+            method: "POST",
+            url: "/user/signin",
+            data: {
+              email: this.inputLogin.email,
+              password: this.inputLogin.password
+            }
+          })
+          .then(({
+            data
+          }) => {
+            console.log(data)
             localStorage.setItem('token', data.token)
             Swal.fire(
               'Logged In!',
               'You have been logged in successfully!',
               'success'
             )
-            localStorage.setItem('name', data.name)
+            localStorage.setItem('name', data.userName)
+            localStorage.setItem('pp', data.pp)
+            this.user.name = data.userName
+            this.user.image_profil = data.pp
             this.name = localStorage.getItem('name')
             this.showLogRegPage = false
             this.showMainPage = true
@@ -163,8 +213,7 @@ var app = new Vue({
           .catch(err => {
             console.log(err)
           })
-      }
-      else {
+      } else {
         Swal.fire({
           type: 'error',
           title: 'Input Error',
@@ -173,6 +222,7 @@ var app = new Vue({
       }
     },
     logout() {
+      localStorage.clear()
       localStorage.removeItem('token')
       Swal.fire(
         'Logged Out!',
@@ -181,6 +231,7 @@ var app = new Vue({
       )
       this.showLogRegPage = true
       this.showMainPage = false
+      this.showProfilePage = false
     }
   }
 })

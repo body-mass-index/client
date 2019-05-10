@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <script src="./js/vue.js"></script>
-  <script src="./js/components/result-bmi.js"></script>
+  
   <link rel="icon" type="image/png" href="https://www.chasebrexton.org/sites/default/files/icons-bmi.png">
 
   <title>BMI Generator</title>
@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- Custom styles for this template -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+
   <!-- <link href="./css/simple-sidebar.css" rel="stylesheet"> -->
   <link href="css/main.css" rel="stylesheet">
 
@@ -88,6 +91,8 @@
               <input type="file" ref="file" class="custom-file-input" id="customFile" @change="selectFile"
                 placeholder="tes">
               <label class="custom-file-label" for="customFile">Select ...</label>
+              <!-- <input v-model="inputRegister.image" type="file" class="custom-file-input" id="customFile"> -->
+              <label class="custom-file-label" for="customFile">Choose file for your profile picture</label>
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Register</button>
@@ -131,21 +136,21 @@
             <form>
               <div class="form-group">
                 <label for="inputHeight">Height</label>
-                <input v-model="inputNewBMI.height" type="text" class="form-control" id="inputHeight"
-                  aria-describedby="heightHelp" placeholder="eg. 170">
-                <small id="heightHelp" class="form-text text-muted">Value in cm</small>
+                <input v-model="inputnewbmi.height" type="text" class="form-control" id="inputHeight"
+                  aria-describedby="heightHelp" placeholder="eg. 1.75">
+                <small id="heightHelp" class="form-text text-muted">Value in m</small>
               </div>
               <div class="form-group">
                 <label for="inputWeight">Password</label>
-                <input v-model="inputNewBMI.weight" type="text" class="form-control" id="inputWeight"
+                <input v-model="inputnewbmi.weight" type="text" class="form-control" id="inputWeight"
                   aria-describedby="heightHelp" placeholder="eg. 55">
                 <small id="weightHelp" class="form-text text-muted">Value in kg</small>
               </div>
-              <button @click="generateBMI" type="submit" class="btn btn-primary">Generate BMI</button>
+              <button @click.prevent="generateBMI" type="submit" class="btn btn-primary">Generate BMI</button>
             </form>
           </div>
           <div class="col-8 border">
-
+              <genimg :user="user" :result="result" :input="inputnewbmi" @tambahbaru="getAllBMIs"></genimg>
           </div>
         </div>
       </div>
@@ -155,7 +160,7 @@
     <!-- Profile Page -->
     <div v-show="showProfilePage" class="container-fluid" id="ProfilePage">
       <div class="row">
-        <div class="col-4">
+        <div class="col-2">
           <div class="list-group">
             <result-bmi @showmodal="showModalBMI" v-for="result in results" :result="result"></result-bmi>
           </div>
@@ -171,6 +176,7 @@
                 </div>
                 <div class="modal-body">
                   <p>{{ modal.url_image }}</p>
+                  <img :src="modal.url_image" alt="" srcset="" style="width:100%">
                 </div>
                 <!-- <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -179,28 +185,57 @@
               </div>
             </div>
           </div>
-          <div class="col-8">
-
-          </div>
+        </div>
+        <div class="col-10">
+            <graph :bmis="results"></graph>
+            <!-- <genimg :user="user" :result="result" :input="input"></genimg> -->
+          <!-- <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...
+            </div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+          </div> -->
         </div>
       </div>
     </div>
   </div>
   <!-- End of Profile Page -->
+
   <!-- Bootstrap core JavaScript -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+  </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
   <script src="./js/vue.js"></script>
+  <script src="./node_modules/chart.js/dist/Chart.js"></script>
+  <script src="./components/graphic.js"></script>
+  <script src="./components/generatedImg.js"></script>
+  <script src="./components/register-edit.js"></script>
+  <script src="./components/result-bmi.js"></script>
   <script src="./js/main.js"></script>
+  <!-- <script src="js/main.js"></script> -->
+  <!-- Menu Toggle Script -->
+  <script>
+    // ClassicEditor
+    //   .create(document.querySelector('#editor'))
+    //   .catch(error => {
+    //     console.error(error);
+    //   });
+
+    //   $("#menu-toggle").click(function (e) {
+    //   e.preventDefault();
+    //   $("#wrapper").toggleClass("toggled");
+    // });
+  </script>
 
 </body>
 

@@ -1,6 +1,9 @@
 /* #login-register-form, #NavBar, #MainPage, #ProfilePage {
   display: none;
 } */
+/* .row {
+  overflow: hidden;
+} */
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
