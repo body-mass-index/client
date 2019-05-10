@@ -150,13 +150,25 @@
       <div class="row">
         <div class="col-4">
           <div class="list-group">
-            <result-bmi @showmodal="getModalBMI" v-for="result in results" :result="result"></result-bmi>
+            <result-bmi @showmodal="showModalBMI" v-for="result in results" :result="result"></result-bmi>
           </div>
           <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
-                MODAL DONG
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ modal.status }}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>{{ modal.url_image }}</p>
+                </div>
+                <!-- <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div> -->
               </div>
             </div>
           </div>

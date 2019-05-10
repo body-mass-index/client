@@ -6,13 +6,13 @@ Vue.component('result-bmi', {
   },
   props:['result'],
   methods:{
-    lemparModal(idResult){
+    lemparModal(){
       console.log('masuk')
-      this.$emit('showmodal',idResult)
+      this.$emit('showmodal',this.result)
     }
   },
   template: `
-    <a @click="lemparModal(result._id)" data-toggle="modal" data-target=".bd-example-modal-lg" href="#" class="list-group-item list-group-item-action">
+    <a @click="lemparModal" data-toggle="modal" data-target=".bd-example-modal-lg" href="#" class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">{{ result.status }}</h5>
         <small>{{ result.date }}</small>

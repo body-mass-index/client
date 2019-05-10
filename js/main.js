@@ -21,6 +21,10 @@ var app = new Vue({
     inputNewBMI: {
       height: "",
       weight: ""
+    },
+    modal:{
+      url_image: "",
+      status: ""
     }
   },
   created() {
@@ -65,23 +69,9 @@ var app = new Vue({
           console.log(err)
         })
     },
-    getModalBMI(idBMI) {
-      axios({
-        method: "GET",
-        url: `/bmi/${idBMI}`,
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
-        .then(response => {
-          this.results = [...response.data]
-          // this.results.forEach((obj, i) => {
-          //   this.results[i].created_at = new Date(this.results[i].created_at.slice(0, 10)).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })
-          // })
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    showModalBMI(result) {
+      this.modal.status = result.status
+      this.modal.url_image = result.url_image
     },
     generateBMI() {
       axios({
@@ -90,6 +80,7 @@ var app = new Vue({
         data: {
           title: this.inputNewPost.title,
           content: this.inputNewPost.content
+          
         },
         headers: {
           token: localStorage.getItem('token')
