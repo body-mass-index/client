@@ -25,9 +25,6 @@ var app = new Vue({
       weight: ""
     }
   },
-  filters: {},
-  computed: {},
-  watch: {},
   created() {
     if (localStorage.hasOwnProperty('token')) {
       this.showLogRegPage = false
